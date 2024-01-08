@@ -3,18 +3,19 @@
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <script src="https://cdn.tailwindcss.com"></script>
       <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+      <link href="output.css" rel="stylesheet">
       <title>Resum.ai</title>
     </head>
-    <body>
-      <div class="bg-white">
-        {{> header }}
-      
-        <div class="relative isolate px-6 pt-14 lg:px-8">
-          <h1 class="text-3xl font-bold underline">this is the main layout hbs template </h1>
-          {{{body}}}
-        </div>
+    <body class="h-screen">
+      {{> header }}
+
+      <div class="relative isolate pt-14 px-6 lg:px-8 container h-full m-auto grid grid-cols-3 md:grid-cols-5 lg:grid-cols-8  grid-rows-5 gap-4 bg-white">
+
+        {{{body}}}
+
       </div>
+
+      {{> footer }}
     </body>
   </html>
