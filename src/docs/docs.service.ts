@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { MongoClient, GridFSBucket, Db, ObjectId } from 'mongodb';
 import * as fs from 'fs';
 import { ProcessingService } from 'src/processing/processing.service';
-
+import { promisify } from 'util';
+import { pipeline } from 'stream';
 @Injectable()
 export class DocsService {
   client: MongoClient;
   db: Db;
   gfs: any;
+  pipelineAsync = promisify(pipeline);
   constructor(private readonly processingService: ProcessingService) {
     this.client = new MongoClient(process.env.MONGODB_URI, {});
     this.db = this.client.db('barzai');
@@ -19,7 +21,6 @@ export class DocsService {
   }
 
   async getFilesInfo() {
-    this.processingService.getSomething();
     const cursor = this.gfs.find({});
     const response = [];
     for await (const doc of cursor) {
@@ -33,7 +34,9 @@ export class DocsService {
   }
 
   uploadFile(file: any) {
-    return fs.createReadStream(file.path).pipe(
+    console.log('DocsService.uploadFile()', file);
+    return this.pipelineAsync(
+      fs.createReadStream(file.path),
       this.gfs.openUploadStream(file.filename, {
         chunkSizeBytes: 1048576,
         metadata: {
@@ -43,7 +46,6 @@ export class DocsService {
         },
       }),
     );
-    // fs.unlinkSync(file.path);
   }
   // 'https://arxiv.org/pdf/2401.02385.pdf',
   async getDocFromUrl(url: string): Promise<any> {

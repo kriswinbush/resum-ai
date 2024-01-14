@@ -13,6 +13,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { DocsService } from './docs.service';
+import { ProcessingService } from 'src/processing/processing.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { diskStorage } from 'multer';
@@ -20,9 +21,14 @@ import * as fs from 'fs';
 import { Response } from 'express';
 import { Transform, pipeline } from 'stream';
 
+const fsp = fs.promises;
+
 @Controller('docs')
 export class DocsController {
-  constructor(private readonly docsService: DocsService) {}
+  constructor(
+    private readonly docsService: DocsService,
+    private readonly processingService: ProcessingService,
+  ) { }
 
   @Get()
   @UseGuards(AuthGuard)
@@ -32,11 +38,34 @@ export class DocsController {
     console.log(fileInfo);
     return { files: fileInfo };
   }
+
   @Delete('/file/:id')
   async deleteFile(@Res() res: Response, @Param('id') id) {
     await this.docsService.deleteFile(id);
     res.setHeader('HX-Trigger', 'updateList');
     res.send();
+  }
+
+  @Get('/embed/:id')
+  async embedFile(@Param('id') id /* , @Res() res: Response */) {
+    console.log(id);
+    const gfsFile = await this.docsService.getFile(id);
+    // should all file extensions be allowed?
+    const writeFs = fs.createWriteStream('./public/images/temp.pdf');
+    let file;
+    pipeline(gfsFile, writeFs, async (err) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log('done');
+      file = fs.readFileSync('public/images/temp.pdf');
+      console.log(file);
+      this.processingService.pdfToLangchainDoc(file);
+      await fsp.unlink('public/images/temp.pdf');
+      return;
+    });
+    return;
   }
 
   @Get('/file/:id')
@@ -47,13 +76,14 @@ export class DocsController {
   ) {
     const ext: any = /[^/]+$/g.exec(contenttype);
     const gfsFile = await this.docsService.getFile(id);
+    // unlink file???
     const stream = fs.createWriteStream(
       `./public/images/${id}.${ext[0] === 'jpeg' ? 'jpg' : ext}`,
       {},
     );
     const tap = new Transform({
       transform(chunk, encoding, callback) {
-        console.log(chunk);
+        // console.log(chunk);
         callback(null, chunk);
       },
     });
@@ -90,6 +120,7 @@ export class DocsController {
     });
   }
 
+  @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -104,17 +135,18 @@ export class DocsController {
       }),
     }),
   )
-  @Post('upload')
-  uploadFile(
+  async uploadFile(
     @Res() res: Response,
     @Body() body: any,
     @UploadedFile() file: Express.Multer.File,
   ) {
     res.setHeader('HX-Trigger', 'updateList');
+    console.log('the file from upload');
     console.log(file);
-    const r = this.docsService.uploadFile(file);
-    console.log(r);
-
+    const upload = await this.docsService.uploadFile(file);
+    console.log('what is upload, a promise?');
+    console.log(upload);
+    fs.unlinkSync(`./uploads/${file.filename}`);
     res.send({ message: 'File uploaded', status: 'ok', data: file.path });
   }
 }

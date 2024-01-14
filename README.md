@@ -43,6 +43,9 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
+
+#watch tailwind
+$ npx tailwindcss -i ./public/input.css -o ./public/output.css --watch
 ```
 
 ## Test

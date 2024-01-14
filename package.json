@@ -29,9 +29,11 @@
     "cookie-parser": "^1.4.6",
     "express-handlebars": "^7.1.2",
     "hbs": "^4.2.0",
+    "langchain": "^0.1.2",
     "mongo-gridfs": "github:khoapmd/mongo-gridfs",
     "mongodb": "^6.3.0",
     "multer-gridfs-storage": "^5.0.2",
+    "pdf-parse": "^1.1.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
   },
