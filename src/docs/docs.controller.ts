@@ -28,7 +28,7 @@ export class DocsController {
   constructor(
     private readonly docsService: DocsService,
     private readonly processingService: ProcessingService,
-  ) { }
+  ) {}
 
   @Get()
   @UseGuards(AuthGuard)
@@ -58,12 +58,10 @@ export class DocsController {
         console.log(err);
         return;
       }
-      console.log('done');
       file = fs.readFileSync('public/images/temp.pdf');
-      console.log(file);
-      this.processingService.pdfToLangchainDoc(file);
+      const docs = await this.processingService.pdfToLangchainDoc(file);
       await fsp.unlink('public/images/temp.pdf');
-      return;
+      await this.processingService.embedDocsToMongoDBVectorStore(docs);
     });
     return;
   }
@@ -109,7 +107,7 @@ export class DocsController {
           case 'application/pdf':
             res.setHeader('Content-Type', 'application/pdf');
             res.send(
-              `<embed src="images/${id}.pdf" width="100%" height="100%" />`,
+              `<embed class="h-96" src="images/${id}.pdf" width="100%" height="100%" />`,
             );
             break;
           default:

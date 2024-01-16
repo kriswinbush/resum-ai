@@ -1,41 +1,41 @@
 
-<h1 class="bg-slate-100 col-start-1 md:col-span-8">upload page</h1>
-
-<ul class="row-start-2 col-start-1 md:col-span-8">
-{{#each files}}
-  <li 
-  class="my-4 shadow-sm"
-  hx-trigger="intersect threshold 0.8"
-  hx-get="/docs/file/{{_id}}?contenttype={{metadata.contentType}}"
-  hx-target="#file{{_id}}"
-  hx-swap="outerHTML"
-  >
-    <div class="rounded-md bg-slate-100">
-      <div>{{filename}}</div>
-      <div>{{_id}}</div>
-      <div>{{metadata.contentType}}</div>
-      <div id="file{{_id}}"></div>
-      <div class="flex justify-end">
-        <button 
-        class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        hx-delete="/docs/file/{{_id}}"
-        hx-target="#del{{_id}}"
-        hx-trigger="click"
-        hx-on::after-request="js: location.reload()"
-        >Delete</button>
-        <button 
-        class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        hx-get="/docs/embed/{{_id}}"
-        hx-target="#del{{_id}}"
-        hx-trigger="click"
-        hx-on::after-request="js: location.reload()"
-        >Embed</button>
-        <div id="del{{_id}}"></div>
-      </div>
+<style>
+  embed {
+    height: 500px;
+  }
+</style>
+<div class="overflow-auto lex flex-col h-full row-start-2 row-end-5 col-start-1 col-span-full">
+  {{!-- <h1 class="pl-14 bg-slate-100 col-start-1 md:col-span-8 text-xl">Upload page</h1> --}}
+  <header class="bg-white shadow">
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold tracking-tight text-gray-900">Upload Documents</h1>
     </div>
-  </li>
-{{/each}}
-</ul>
+  </header>
+  {{#each files}}
+
+  <div hx-trigger="intersect threshold 0.8" hx-get="/docs/file/{{_id}}?contenttype={{metadata.contentType}}"
+    hx-target="#file{{_id}}" hx-swap="outerHTML" class="border-2 m-5 h-auto mt-5 my-24 shadow-sm rounded-md bg-slate-100">
+    <div class="m-5">
+      <div>Filename: {{filename}}</div>
+      <div>Id: {{_id}}</div>
+      <div>Content Type: {{metadata.contentType}}</div>
+      <div id="file{{_id}}"></div>
+    </div>
+    <div class="flex justify-end">
+      <hr>
+      <button
+        class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 m-4 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        hx-delete="/docs/file/{{_id}}" hx-target="#del{{_id}}" hx-trigger="click"
+        hx-on::after-request="js: location.reload()">Delete</button>
+      <button
+        class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 m-4 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        hx-get="/docs/embed/{{_id}}" hx-target="#del{{_id}}" hx-trigger="click"
+        hx-on::after-request="js: location.reload()">Embed</button>
+      <div id="del{{_id}}"></div>
+    </div>
+  </div>
+  {{/each}}
+</div>
 
 
 {{> footer }}

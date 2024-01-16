@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { MongoClient, GridFSBucket, Db, ObjectId } from 'mongodb';
 import * as fs from 'fs';
-import { ProcessingService } from 'src/processing/processing.service';
 import { promisify } from 'util';
 import { pipeline } from 'stream';
+
 @Injectable()
 export class DocsService {
   client: MongoClient;
   db: Db;
   gfs: any;
   pipelineAsync = promisify(pipeline);
-  constructor(private readonly processingService: ProcessingService) {
+  constructor() {
     this.client = new MongoClient(process.env.MONGODB_URI, {});
     this.db = this.client.db('barzai');
     this.gfs = new GridFSBucket(this.db, { bucketName: 'uploads' });

@@ -5,10 +5,21 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { DocsModule } from './docs/docs.module';
-import { ProcessingService } from './processing/processing.service';
+import { ProcessingModule } from './processing/processing.module';
+import { BrainModule } from './brain/brain.module';
+import { ChatModule } from './chat/chat.module';
+
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule, UsersModule, DocsModule],
+  imports: [
+    ConfigModule.forRoot(),
+    AuthModule,
+    UsersModule,
+    DocsModule,
+    ProcessingModule,
+    BrainModule,
+    ChatModule,
+  ],
   controllers: [AppController],
-  providers: [AppService, ProcessingService],
+  providers: [AppService],
 })
 export class AppModule {}

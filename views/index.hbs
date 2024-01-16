@@ -7,17 +7,23 @@
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
   <link href="output.css" rel="stylesheet">
   <title>Resum.ai</title>
+  <style>
+    .grid-body {
+      grid-template-rows: 80px; /* top row is 100px in height */
+      grid-auto-rows: auto;  
+    }
+  </style>
 </head>
 
-<body class="h-screen">
+<body class="grid-body h-screen grid grid-cols-3 md:grid-cols-5 lg:grid-cols-8  grid-rows-6 gap-4 overflow-hidden">
   {{> header }}
 
-  <div
-    class="relative isolate pt-14 px-6 lg:px-8 container h-full m-auto grid grid-cols-3 md:grid-cols-5 lg:grid-cols-8  grid-rows-5 gap-4 bg-white">
+  {{!-- <div
+    class="relative isolate pt-14 px-6 lg:px-8 container h-full m-auto bg-white"> --}}
 
     {{{body}}}
 
-  </div>
+  {{!-- </div> --}}
 
 </body>
 
